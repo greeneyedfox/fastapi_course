@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 
 from fastapi import FastAPI, Request, status, Depends
 from fastapi.encoders import jsonable_encoder
-from fastapi.exceptions import ValidationError
+from fastapi.exceptions import ValidationException
 from fastapi.responses import JSONResponse
 
 from auth.auth import auth_backend
@@ -46,3 +46,4 @@ def protected_route(user: User = Depends(current_user)):
 @app.get("/unprotected-route")
 def unprotected_route():
     return f"Hello, anonym"
+#d

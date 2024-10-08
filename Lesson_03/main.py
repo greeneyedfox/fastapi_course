@@ -5,21 +5,21 @@ from pydantic import BaseModel, Field
 
 from fastapi import FastAPI, Request, status
 from fastapi.encoders import jsonable_encoder
-from fastapi.exceptions import ValidationError
+from fastapi.exceptions import ValidationException
 from fastapi.responses import JSONResponse
 
 app = FastAPI(
     title="Trading App"
 )
 
-
-# Благодаря этой функции клиент видит ошибки, происходящие на сервере, вместо "Internal server error"
-@app.exception_handler(ValidationError)
-async def validation_exception_handler(request: Request, exc: ValidationError):
-    return JSONResponse(
-        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        content=jsonable_encoder({"detail": exc.errors()}),
-    )
+#
+# # Благодаря этой функции клиент видит ошибки, происходящие на сервере, вместо "Internal server error"
+# @app.exception_handler(ValidationException)
+# async def validation_exception_handler(request: Request, exc: ValidationException):
+#     return JSONResponse(
+#         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+#         content=jsonable_encoder({"detail": exc.errors()}),
+#     )
 
 
 fake_users = [
@@ -61,11 +61,17 @@ fake_trades = [
 ]
 
 
+class Side(Enum):
+    buy = "buy"
+    sell = "sell"
+    hold = "hold"
+    
+
 class Trade(BaseModel):
     id: int
     user_id: int
     currency: str = Field(max_length=5)
-    side: str
+    side: Optional[Side] = None  # Используем перечисление Side, строка будет автоматически преобразована
     price: float = Field(ge=0)
     amount: float
 
